@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h2 class="text-center">登录页面</h2>
+            <div class="form-group">
+                <label for="id_username">用户名</label>
+                <input type="text" id="id_username" name="username" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="id_password">密码</label>
+                <input type="password" id="id_password" name="password" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="id_code">验证码</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" name="code" id="id_code" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <img src="/get_code/" alt="" width="360" height="35" id="id_img">
+                    </div>
+                </div>
+            </div>
+            <input type="button" class="btn btn-primary" value="登录" id="id_submit">
+            <span style="color: red;" id="id_error"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#id_img').click(function () {
+        var oldPath = $(this).attr('src');
+        $(this).attr('src',oldPath+='?')
+    });
+
+
+    $('#id_submit').click(function () {
+        $.ajax({
+            url:'',
+            type:'post',
+            data:{
+                'username':$('#id_username').val(),
+                'password':$('#id_password').val(),
+                'code':$('#id_code').val(),
+                'csrfmiddlewaretoken':'{{ csrf_token }}'
+            },
+            success:function (data) {
+                if(data.code == 1000){
+                    // 跳转
+                    window.location.href = data.url
+                }else{
+                    $('#id_error').text(data.msg);
+                    var oldPath = $('#id_img').attr('src');
+                    $('#id_img').attr('src',oldPath+='?')
+
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>
